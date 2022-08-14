@@ -118,7 +118,7 @@ impl GameBox {
 }
 
 
-#[macroquad::main("trial_by_laser")]
+#[macroquad::main("BallBox")]
 async fn main() {
     //intialise
     let mut player = Player::new(7);
