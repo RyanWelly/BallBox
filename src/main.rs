@@ -1,12 +1,14 @@
 use macroquad::{prelude::*, color};
+use macroquad::rand;
 
-const BOX_LEVEL: f32 = 150f32; //maybe define in terms of screen dimensions at runtime
+const BOX_LEVEL: f32 = 450f32; //maybe define in terms of screen dimensions at runtime
 const BOX_HEIGHT: f32 = 5f32;
 const BOX_WIDTH: f32 = 40f32;
 const PLAYER_SPEED: f32 = 10f32;
 const PLAYER_SIZE: Vec2 = const_vec2!([30f32, 50f32]);
-const GROUND_LEVEL: f32 = 100f32;
-
+const GROUND_LEVEL: f32 = 400f32;
+const BALL_SIZE: f32 = 30f32; //Play around with different sizes
+const BALL_START_HEIGHT: f32 = 100f32; //play around with different sizes
 
 struct Player {
     rect: Rect,
@@ -36,16 +38,18 @@ impl Player {
         let mut x_move = 0f32;
 
         if is_key_down(KeyCode::Left) {
-            x_move -= 20f32;
+            x_move -= 30f32;
         } 
         if is_key_down(KeyCode::Right) {
-            x_move += 20f32;
+            x_move += 30f32;
         }
 
         self.rect.x += x_move * dt * PLAYER_SPEED; //change this so that it doesn't move smoothly, it just jumps to being above each box.
         if self.rect.x < 0f32 {
             self.rect.x = 0f32;
         }
+
+        
 
         if self.rect.x > screen_width() {
             self.rect.x = screen_width() - self.rect.w;
@@ -59,9 +63,12 @@ struct Ball {
 }
 
 impl Ball {
-    // pub fn new(x: f32, color: BoxColor) -> Self {
-    //     Self { circle: (), color: () }
-    // }
+    pub fn new(x: f32, color: BoxColor) -> Self {
+        //TODO: change this to a global rng generator
+        
+        let random_colour = if rand::gen_range(0, 1) == 1 {BoxColor::Green} else {BoxColor::Purple};
+        Self { circle: Circle { x: x, y: BALL_START_HEIGHT, r: BALL_SIZE }, color: random_colour }
+    }
 
     pub fn update(&mut self, dt: f32) {
         //maybe take into account angle shooting
@@ -126,7 +133,7 @@ async fn main() {
     for i in 0..=8 {
         let boxcolor;
         if i % 2 == 0 {boxcolor = BoxColor::Green} else {boxcolor = BoxColor::Purple}
-        let new_box: GameBox = GameBox::new((i as f32 * 2f32 * BOX_WIDTH) as f32, boxcolor);
+        let new_box: GameBox = GameBox::new({i+ 1} as f32 * 2f32 * BOX_WIDTH, boxcolor);
         Boxes.push(new_box);
     }
 
